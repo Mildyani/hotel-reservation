@@ -1,11 +1,11 @@
-import { useRouter } from "next/router";
-import { useForm } from "react-hook-form";
 import LoginForm from "../compoment/Admin/LoginForm";
+import { useForm } from "react-hook-form";
 
-const axios = require("axios");
+import Router from "next/router";
+import axios from "axios";
+import { login } from "../../libs/auth";
 
 const Admin = () => {
-  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -14,17 +14,16 @@ const Admin = () => {
     clearErrors,
   } = useForm();
 
-  const login = (d) => {
+  const onSubmit = (data) => {
     axios
-      .post("http://localhost:3000/api/admin", {
-        username: d.username,
-        password: d.password,
-      })
+      .post(`${process.env.NEXT_PUBLIC_DORADORA_API_URL}/staffs/login`, data)
       .then((res) => {
-        router.replace("/admin/reservation");
+        login(res.data);
+        Router.replace("/admin");
       })
       .catch((e) => {
-        setError("notRegistered", e.response.data);
+        setError("sumit", { message: "login error" });
+        console.log("error " + e);
       });
   };
 
@@ -39,7 +38,7 @@ const Admin = () => {
                 handleSubmit={handleSubmit}
                 errors={errors}
                 clearErrors={clearErrors}
-                login={login}
+                onSubmit={onSubmit}
               />
             </div>
           </div>
